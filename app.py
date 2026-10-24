@@ -5,6 +5,7 @@ Définit l'application Flask, la route unique ``/`` et la fonction
 aux fonctions du module ``operators``.
 """
 
+import math
 import re
 
 from flask import Flask, request, render_template
@@ -47,6 +48,8 @@ def calculate(expr: str):
     Raises:
         ValueError: Si l'expression est vide ou ne respecte pas la forme
             « nombre opérateur nombre ».
+        OverflowError: Si un opérande ou le résultat dépasse la capacité
+            d'un ``float``.
     """
     if not expr or not isinstance(expr, str):
         raise ValueError("empty expression")
@@ -56,7 +59,15 @@ def calculate(expr: str):
         raise ValueError("invalid expression format")
 
     left, op_char, right = match.groups()
-    return OPS[op_char](float(left), float(right))
+    a, b = float(left), float(right)
+    result = OPS[op_char](a, b)
+
+    # float() et les opérations ne lèvent pas d'erreur en cas de dépassement :
+    # ils produisent silencieusement inf. NUMBER exclut déjà « inf » et
+    # « nan », donc une valeur non finie signifie forcément un dépassement.
+    if not all(math.isfinite(x) for x in (a, b, result)):
+        raise OverflowError("result too large")
+    return result
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -70,6 +81,8 @@ def index():
         expression = request.form.get('display', '')
         try:
             result = calculate(expression)
+        except OverflowError:
+            result = "Erreur : résultat trop grand"
         except Exception as e:
             # L'erreur est affichée dans l'écran de la calculatrice plutôt
             # que de renvoyer une page d'erreur HTTP à l'utilisateur.
