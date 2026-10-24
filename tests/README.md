@@ -37,6 +37,7 @@ client de test de Flask.
 | `conftest.py`       | Fixture `client` partagée : client de test Flask en mode `TESTING`. |
 | `test_operators.py` | `add`, `subtract`, `multiply`, `divide` de `operators.py` : résultats pour des entiers, décimaux et zéro, ordre des opérandes, division réelle (sans troncature) et `ZeroDivisionError`. |
 | `test_calculate.py` | `calculate` de `app.py` : chaque opérateur, espaces, décimales, type du résultat, opérandes négatifs et en notation scientifique, nombre seul, rejet (`ValueError`) des expressions mal formées et des opérandes `inf`/`nan`, division par zéro (`ZeroDivisionError`) et dépassement de capacité (`OverflowError`). |
+| `test_format.py`    | `format_result` de `app.py` : arrondi à 12 chiffres significatifs, suppression des zéros superflus, bascule en notation scientifique, absence de `-0`. |
 | `test_routes.py`    | Route `/` : `GET` affiche un écran vide ; format du résultat affiché (`11` et non `11.0`, 12 chiffres significatifs, notation scientifique) ; tout résultat affiché est réutilisable comme opérande ; nombre seul et écran vide ; messages d'erreur en français ; une exception imprévue n'est pas masquée. |
 | `test_interface.py` | `templates/index.html` rendu : chaque bouton de chiffre et d'opérateur affiche le caractère qu'il ajoute, seul `=` soumet le formulaire, `C` appelle `clearDisplay()`, titre et en-tête en français. |
 

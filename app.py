@@ -65,6 +65,22 @@ def calculate(expr: str):
 
     return OPS[op_char](a, b)
 
+
+def format_result(value: float) -> str:
+    """Formate un résultat pour l'écran de la calculatrice.
+
+    Args:
+        value: Résultat numérique retourné par ``calculate``.
+
+    Returns:
+        Le nombre avec au plus 12 chiffres significatifs, sans zéros ni point
+        décimal superflus (``11.0`` donne ``"11"``), en notation scientifique
+        pour les très grands ou très petits nombres (``"1e+16"``).
+    """
+    # 12 chiffres masquent les erreurs d'arrondi binaires (0.1 + 0.2).
+    # « + 0.0 » transforme -0.0 en 0.0 pour ne pas afficher « -0 ».
+    return format(value + 0.0, ".12g")
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """Affiche la calculatrice et traite l'expression envoyée par le formulaire.
@@ -76,7 +92,7 @@ def index():
     if request.method == 'POST':
         expression = request.form.get('display', '')
         try:
-            result = calculate(expression)
+            result = format_result(calculate(expression))
         except Exception as e:
             # L'erreur est affichée dans l'écran de la calculatrice plutôt
             # que de renvoyer une page d'erreur HTTP à l'utilisateur.
