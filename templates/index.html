@@ -1,5 +1,6 @@
+<!-- Interface HTML de la calculatrice -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,11 +38,20 @@
 </div>
 
 <script>
+   /**
+    * Ajoute un caractère à l'expression affichée.
+    * @param {string} value: Caractère à ajouter.
+    * @returns {void}
+    */
    function appendToDisplay(value) {
       const display = document.getElementById('display');
       display.value += value;
    }
 
+   /**
+    * Efface l'expression affichée afin de recommencer une saisie.
+    * @returns {void}
+    */
    function clearDisplay() {
       document.getElementById('display').value = '';
    }
