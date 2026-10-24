@@ -1,4 +1,4 @@
-<!-- Interface HTML de la calculatrice -->
+<!-- Interface HTML de la calculatrice, rendue par la route « / » de app.py (Jinja2). -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,9 +10,14 @@
 <body>
 <div class="calculator">
    <h1>Flask Calculator</h1>
+   <!-- Le formulaire est renvoyé à « / » ; app.py lit le champ « display ». -->
    <form method="POST">
+      <!-- En lecture seule : la saisie se fait par les boutons. Affiche le
+           résultat (ou l'erreur) retourné par le serveur. -->
       <input type="text" name="display" id="display" value="{{ result }}" readonly>
 
+      <!-- type="button" empêche ces boutons de soumettre le formulaire ;
+           seul « = » (type="submit") envoie l'expression au serveur. -->
       <div class="buttons">
          <button type="button" class="btn" onclick="appendToDisplay('1')">1</button>
          <button type="button" class="btn" onclick="appendToDisplay('2')">02</button>
