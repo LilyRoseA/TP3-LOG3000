@@ -1,8 +1,9 @@
 """Point d'entrée de l'application web de calculatrice.
 
-Définit l'application Flask, la route unique ``/`` et la fonction
-``calculate`` qui analyse l'expression saisie avant de déléguer le calcul
-aux fonctions du module ``operators``.
+Définit l'application Flask et sa route unique ``/``, la fonction
+``calculate``, qui analyse l'expression saisie avant de déléguer le calcul
+aux fonctions du module ``operators``, et la fonction ``format_result``, qui
+prépare le résultat pour l'écran de la calculatrice.
 """
 
 import math
@@ -33,7 +34,7 @@ EXPRESSION_RE = re.compile(
 )
 
 
-def calculate(expr: str):
+def calculate(expr: str) -> float:
     """Évalue une expression contenant deux nombres et un opérateur, ou un nombre seul.
 
     Chaque nombre peut porter un signe ``-`` et être en notation scientifique,
@@ -54,11 +55,11 @@ def calculate(expr: str):
             d'un ``float``.
     """
     if not expr or not isinstance(expr, str):
-        raise ValueError("empty expression")
+        raise ValueError("expression vide")
 
     match = EXPRESSION_RE.fullmatch(expr.replace(" ", ""))
     if match is None:
-        raise ValueError("invalid expression format")
+        raise ValueError("expression mal formée")
 
     left, op_char, right = match.groups()
     if op_char is None:
@@ -72,7 +73,7 @@ def calculate(expr: str):
     # ils produisent silencieusement inf. NUMBER exclut déjà « inf » et
     # « nan », donc une valeur non finie signifie forcément un dépassement.
     if not all(math.isfinite(x) for x in (*operands, result)):
-        raise OverflowError("result too large")
+        raise OverflowError("résultat trop grand")
     return result
 
 

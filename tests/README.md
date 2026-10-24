@@ -5,9 +5,11 @@
 Ce répertoire contient les tests automatisés du projet, écrits avec
 [pytest](https://docs.pytest.org/). Ils vérifient que le backend calcule
 correctement, que la route Flask gère les erreurs et que l'interface affiche
-les bons boutons. Les valeurs attendues suivent le comportement documenté dans
-les docstrings du code, et non le comportement actuel : un test qui échoue
-signale un bogue.
+les bons boutons. Les valeurs attendues suivent le comportement documenté
+(docstrings du code et section « Portée » du [README principal](../README.md)),
+et non le comportement observé : c'est ainsi que la suite a révélé les bogues
+de la base de code initiale (Issues #1 à #12). Toute la suite passe sur
+`main` ; un test qui échoue signale donc une régression.
 
 ## Exécuter les tests
 
@@ -43,8 +45,9 @@ client de test de Flask.
 
 ### Hors couverture
 
-Ces comportements sont vérifiés manuellement dans un navigateur ; la
-procédure est décrite dans l'Issue correspondante.
+Ces comportements sont vérifiés manuellement ; la procédure et le résultat
+sont décrits dans l'Issue correspondante (#12 pour le JavaScript, #6 pour le
+CSS, avec des captures avant/après dans [`docs/`](../docs/README.md)).
 
 - Le JavaScript (`appendToDisplay`, `clearDisplay`) n'est pas exécuté ; seule
   la structure HTML est vérifiée. En particulier, le comportement des boutons
