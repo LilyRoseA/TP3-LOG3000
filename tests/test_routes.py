@@ -74,6 +74,23 @@ def test_resultat_affiche_reutilisable(client, expression):
     assert afficher(client, premier + "+0") == premier
 
 
+def test_nombre_seul_affiche_le_nombre(client):
+    """« = » sur un nombre seul affiche ce nombre plutôt qu'une erreur."""
+    assert afficher(client, "2.5") == "2.5"
+
+
+def test_ecran_vide_reste_vide(client):
+    """« = » sur un écran vide ne produit pas d'erreur : l'écran reste vide."""
+    assert afficher(client, "") == ""
+
+
+def test_post_sans_champ_display_reste_vide(client):
+    """Un formulaire sans champ ``display`` est traité comme un écran vide."""
+    reponse = client.post("/", data={})
+    assert reponse.status_code == 200
+    assert valeur_affichee(reponse.get_data(as_text=True)) == ""
+
+
 def test_post_expression_invalide_affiche_une_erreur(client):
     """Une expression mal formée affiche un message d'erreur, pas une page 500."""
     assert afficher(client, "2+").startswith("Error:")
@@ -82,10 +99,3 @@ def test_post_expression_invalide_affiche_une_erreur(client):
 def test_post_division_par_zero_affiche_une_erreur(client):
     """La division par zéro est attrapée par la route et affichée comme erreur."""
     assert afficher(client, "5/0").startswith("Error:")
-
-
-def test_post_sans_champ_display_affiche_une_erreur(client):
-    """Un formulaire sans champ ``display`` est traité comme une expression vide."""
-    reponse = client.post("/", data={})
-    assert reponse.status_code == 200
-    assert valeur_affichee(reponse.get_data(as_text=True)).startswith("Error:")

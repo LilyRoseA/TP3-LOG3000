@@ -55,9 +55,19 @@ def test_calculate_accepte_les_operandes_signes_et_scientifiques(expression, att
     assert calculate(expression) == pytest.approx(attendu)
 
 
+@pytest.mark.parametrize("expression, attendu", [
+    ("42", 42.0),
+    ("-7", -7.0),
+    ("2.5", 2.5),
+    ("1e+16", 1e16),
+])
+def test_calculate_nombre_seul(expression, attendu):
+    """Un nombre seul, sans opérateur, est retourné tel quel (« = » sur un nombre)."""
+    assert calculate(expression) == attendu
+
+
 @pytest.mark.parametrize("expression", [
     "",        # expression vide
-    "42",      # aucun opérateur
     "+3",      # seul « - » est accepté comme signe
     "3+",      # opérande droit manquant
     "--3+2",   # deux signes sur un même opérande
