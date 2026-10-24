@@ -28,10 +28,12 @@ le résultat affiché à l'écran de la calculatrice.
 ├── app.py             # Serveur Flask : route « / » et analyse de l'expression (calculate)
 ├── operators.py       # Fonctions arithmétiques add, subtract, multiply, divide
 ├── requirements.txt   # Dépendances Python (Flask, pytest)
+├── pytest.ini         # Configuration de pytest
 ├── templates/         # Gabarits HTML (Jinja2)  → voir templates/README.md
 │   └── index.html
-└── static/            # Fichiers servis tels quels (CSS)  → voir static/README.md
-    └── style.css
+├── static/            # Fichiers servis tels quels (CSS)  → voir static/README.md
+│   └── style.css
+└── tests/             # Tests automatisés (pytest)  → voir tests/README.md
 ```
 
 Chaque répertoire contient son propre `README.md` décrivant son rôle, ses
@@ -128,14 +130,11 @@ Depuis la racine du projet, avec l'environnement virtuel activé :
 ```bash
 python -m pytest            # exécuter toute la suite
 python -m pytest -v         # afficher le détail de chaque test
-python -m pytest tests/<fichier>.py   # exécuter un seul fichier
+python -m pytest tests/test_operators.py   # exécuter un seul fichier
 ```
 
-> Utiliser `python -m pytest` (plutôt que `pytest`) ajoute la racine du
-> projet au chemin d'import, ce qui permet aux tests d'importer `app` et
-> `operators`.
-
-Le contenu et la couverture des tests sont décrits dans `tests/README.md`.
+Aucun serveur n'a besoin d'être lancé. Le contenu et la couverture des tests
+sont décrits dans [`tests/README.md`](tests/README.md).
 
 ## Flux de contribution
 
