@@ -34,12 +34,34 @@ def test_calculate_retourne_un_float():
     assert isinstance(calculate("2+3"), float)
 
 
+@pytest.mark.parametrize("expression, attendu", [
+    ("-2+1", -1.0),
+    ("-2.5+0.5", -2.0),
+    ("3+-2", 1.0),
+    ("-3+-2", -5.0),
+    ("1e+16+1", 1e16 + 1),
+    ("1e-9+1", 1.000000001),
+    ("-1e+16+1", -1e16 + 1),
+    ("1+1e-9", 1.000000001),
+])
+def test_calculate_accepte_les_operandes_signes_et_scientifiques(expression, attendu):
+    """Chaque opérande peut être négatif ou en notation scientifique.
+
+    Un « - » en tête d'opérande est un signe, et le signe d'un exposant
+    (``e+16``, ``e-9``) fait partie du nombre : ni l'un ni l'autre n'est
+    l'opérateur de l'expression. Un résultat affiché peut donc toujours être
+    réutilisé comme opérande.
+    """
+    assert calculate(expression) == pytest.approx(attendu)
+
+
 @pytest.mark.parametrize("expression", [
     "",        # expression vide
     "42",      # aucun opérateur
-    "+3",      # opérande gauche manquant
+    "+3",      # seul « - » est accepté comme signe
     "3+",      # opérande droit manquant
-    "-3+2",    # le signe négatif compte comme un second opérateur
+    "--3+2",   # deux signes sur un même opérande
+    "3+--2",
     "1+2+3",   # plusieurs opérateurs
     "a+2",     # opérande non numérique
     "2+b",

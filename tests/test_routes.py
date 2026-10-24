@@ -63,6 +63,17 @@ def test_format_du_resultat(client, expression, affiche):
     assert afficher(client, expression) == affiche
 
 
+@pytest.mark.parametrize("expression", ["11+0", "-1.5+0", "1e+16+0", "1e-09+0", "0.1+0.2"])
+def test_resultat_affiche_reutilisable(client, expression):
+    """Tout résultat affiché peut être renvoyé tel quel sans provoquer d'erreur.
+
+    Simule « = » puis « + 0 = » : le second calcul doit redonner le premier
+    résultat.
+    """
+    premier = afficher(client, expression)
+    assert afficher(client, premier + "+0") == premier
+
+
 def test_post_expression_invalide_affiche_une_erreur(client):
     """Une expression mal formée affiche un message d'erreur, pas une page 500."""
     assert afficher(client, "2+").startswith("Error:")
