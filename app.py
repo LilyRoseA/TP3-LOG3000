@@ -1,8 +1,9 @@
 """Point d'entrée de l'application web de calculatrice.
 
-Définit l'application Flask, la route unique ``/`` et la fonction
-``calculate`` qui analyse l'expression saisie avant de déléguer le calcul
-aux fonctions du module ``operators``.
+Définit l'application Flask et sa route unique ``/``, la fonction
+``calculate``, qui analyse l'expression saisie avant de déléguer le calcul
+aux fonctions du module ``operators``, et la fonction ``format_result``, qui
+prépare le résultat pour l'écran de la calculatrice.
 """
 
 import math
