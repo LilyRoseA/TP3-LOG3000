@@ -102,14 +102,17 @@ def index():
     expression = request.form.get('display', '')
     # « = » sur un écran vide n'est pas une erreur : l'écran reste simplement vide.
     if request.method == 'POST' and expression.strip():
+        # Les erreurs de saisie attendues sont affichées dans l'écran de la
+        # calculatrice, avec un message fixe plutôt que le texte technique de
+        # l'exception. Toute autre exception est un bogue : elle doit remonter.
         try:
             result = format_result(calculate(expression))
+        except ValueError:
+            result = "Erreur : expression invalide"
+        except ZeroDivisionError:
+            result = "Erreur : division par zéro"
         except OverflowError:
             result = "Erreur : résultat trop grand"
-        except Exception as e:
-            # L'erreur est affichée dans l'écran de la calculatrice plutôt
-            # que de renvoyer une page d'erreur HTTP à l'utilisateur.
-            result = f"Error: {e}"
     return render_template('index.html', result=result)
 
 if __name__ == '__main__':
