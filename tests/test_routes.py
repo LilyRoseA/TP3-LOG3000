@@ -1,10 +1,13 @@
 """Tests de la route ``/`` de ``app.py`` au moyen du client de test Flask.
 
 Seule l'addition est utilisée pour les calculs valides : ces tests vérifient
-le cheminement de la requête, pas l'arithmétique (voir ``test_operators.py``).
+le cheminement de la requête et l'affichage, pas l'arithmétique (voir
+``test_operators.py``).
 """
 
 import re
+
+import pytest
 
 
 def valeur_affichee(html):
@@ -21,6 +24,21 @@ def valeur_affichee(html):
     return match.group(1)
 
 
+def afficher(client, expression):
+    """Soumet ``expression`` comme le ferait le bouton « = ».
+
+    Args:
+        client: Fixture ``client``.
+        expression: Contenu du champ ``display`` envoyé.
+
+    Returns:
+        La valeur affichée dans la page renvoyée (code 200 vérifié).
+    """
+    reponse = client.post("/", data={"display": expression})
+    assert reponse.status_code == 200
+    return valeur_affichee(reponse.get_data(as_text=True))
+
+
 def test_get_affiche_la_calculatrice_vide(client):
     """Un GET renvoie la page avec un écran vide."""
     reponse = client.get("/")
@@ -30,23 +48,29 @@ def test_get_affiche_la_calculatrice_vide(client):
 
 def test_post_affiche_le_resultat(client):
     """Un POST valide affiche le résultat dans le champ ``display``."""
-    reponse = client.post("/", data={"display": "2+3"})
-    assert reponse.status_code == 200
-    assert valeur_affichee(reponse.get_data(as_text=True)) == "5.0"
+    assert afficher(client, "2+3") == "5"
+
+
+@pytest.mark.parametrize("expression, affiche", [
+    ("5+6", "11"),                  # pas de « .0 » superflu
+    ("1.5+1", "2.5"),
+    ("0.1+0.2", "0.3"),             # 12 chiffres significatifs au plus
+    ("10000000000000000+1", "1e+16"),  # notation scientifique pour les grands nombres
+    ("0.000000001+0", "1e-09"),        # et pour les très petits
+])
+def test_format_du_resultat(client, expression, affiche):
+    """Le résultat est affiché sans décimales superflues ni artefacts d'arrondi."""
+    assert afficher(client, expression) == affiche
 
 
 def test_post_expression_invalide_affiche_une_erreur(client):
     """Une expression mal formée affiche un message d'erreur, pas une page 500."""
-    reponse = client.post("/", data={"display": "2+"})
-    assert reponse.status_code == 200
-    assert valeur_affichee(reponse.get_data(as_text=True)).startswith("Error:")
+    assert afficher(client, "2+").startswith("Error:")
 
 
 def test_post_division_par_zero_affiche_une_erreur(client):
     """La division par zéro est attrapée par la route et affichée comme erreur."""
-    reponse = client.post("/", data={"display": "5/0"})
-    assert reponse.status_code == 200
-    assert valeur_affichee(reponse.get_data(as_text=True)).startswith("Error:")
+    assert afficher(client, "5/0").startswith("Error:")
 
 
 def test_post_sans_champ_display_affiche_une_erreur(client):
