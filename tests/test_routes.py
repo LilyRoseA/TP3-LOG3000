@@ -73,6 +73,9 @@ def test_resultat_affiche_reutilisable(client, expression):
     résultat.
     """
     premier = afficher(client, expression)
+    # Sans cette vérification, un message d'erreur renvoyé produirait le même
+    # message, et le test passerait à tort.
+    float(premier)
     assert afficher(client, premier + "+0") == premier
 
 
