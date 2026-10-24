@@ -96,6 +96,16 @@ def test_seul_le_bouton_egal_soumet_le_formulaire(boutons):
     assert soumission == ["="]
 
 
+def test_titre_et_entete_en_francais(client):
+    """Le titre de l'onglet et l'en-tête sont en français, comme ``lang="fr"``."""
+    html = client.get("/").get_data(as_text=True)
+    assert '<html lang="fr">' in html
+    titre = re.search(r"<title>(.*?)</title>", html).group(1)
+    entete = re.search(r"<h1>(.*?)</h1>", html).group(1)
+    assert "Calculatrice" in titre
+    assert "Calculatrice" in entete
+
+
 def test_bouton_effacer(boutons):
     """Le bouton « C » appelle ``clearDisplay()``."""
     effacer = [b for b in boutons if b["etiquette"] == "C"]

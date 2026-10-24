@@ -9,6 +9,8 @@ import re
 
 import pytest
 
+import app as module_app
+
 
 def valeur_affichee(html):
     """Extrait la valeur du champ ``display`` de la page rendue.
@@ -91,16 +93,32 @@ def test_post_sans_champ_display_reste_vide(client):
     assert valeur_affichee(reponse.get_data(as_text=True)) == ""
 
 
-def test_post_expression_invalide_affiche_une_erreur(client):
-    """Une expression mal formée affiche un message d'erreur, pas une page 500."""
-    assert afficher(client, "2+").startswith("Error:")
+@pytest.mark.parametrize("expression", ["2+", "1+2+3", "a+2"])
+def test_expression_invalide_affiche_un_message(client, expression):
+    """Une expression mal formée affiche un message clair en français."""
+    assert afficher(client, expression) == "Erreur : expression invalide"
 
 
-def test_post_division_par_zero_affiche_une_erreur(client):
-    """La division par zéro est attrapée par la route et affichée comme erreur."""
-    assert afficher(client, "5/0").startswith("Error:")
+def test_division_par_zero_affiche_un_message(client):
+    """La division par zéro affiche un message clair en français."""
+    assert afficher(client, "5/0") == "Erreur : division par zéro"
 
 
 def test_depassement_affiche_un_message(client):
     """Un résultat trop grand affiche un message clair plutôt que « inf »."""
     assert afficher(client, "9" * 400 + "+1") == "Erreur : résultat trop grand"
+
+
+def test_erreur_de_programmation_non_masquee(client, monkeypatch):
+    """Seules les erreurs de saisie attendues sont affichées à l'utilisateur.
+
+    Une exception imprévue (un bogue) ne doit pas être déguisée en message
+    d'erreur : elle remonte, ce qui produit une page 500 et une trace dans
+    le journal du serveur.
+    """
+    def calculate_defaillant(expression):
+        raise RuntimeError("bogue simulé")
+
+    monkeypatch.setattr(module_app, "calculate", calculate_defaillant)
+    with pytest.raises(RuntimeError):
+        client.post("/", data={"display": "2+3"})
