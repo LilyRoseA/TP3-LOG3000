@@ -97,16 +97,29 @@ python -m pip --version
 
 Depuis la racine du projet, avec l'environnement virtuel activé :
 
-```bash
-python app.py
-```
+| Mode | Commande | Usage |
+|------|----------|-------|
+| Normal | `flask --app app run` | Utilisation courante, démonstration. |
+| Développement | `flask --app app run --debug` | Rechargement automatique à chaque modification du code et traces d'erreur détaillées dans le navigateur. |
+| Développement (raccourci) | `python app.py` | Équivaut au mode développement : `app.py` active toujours le mode debug. |
 
-Le serveur démarre en mode debug (rechargement automatique à chaque
-modification du code). Ouvrir ensuite <http://127.0.0.1:5000> dans un
-navigateur. Arrêter le serveur avec `Ctrl+C`.
+Ouvrir ensuite <http://127.0.0.1:5000> dans un navigateur. Arrêter le serveur
+avec `Ctrl+C`. Les options `--host` et `--port` changent l'adresse d'écoute
+(p. ex. `flask --app app run --port 8000`).
 
-> Le mode debug est destiné au développement local seulement ; ne pas
-> l'utiliser pour un déploiement.
+> Le mode debug permet d'exécuter du code Python depuis le navigateur en cas
+> d'erreur : ne jamais l'activer sur un serveur accessible par d'autres
+> machines. Le serveur intégré de Flask, même sans debug, est conçu pour le
+> développement ; un déploiement réel passerait par un serveur WSGI comme
+> [Waitress](https://docs.pylonsproject.org/projects/waitress/) ou
+> [Gunicorn](https://gunicorn.org/).
+
+Chaque requête est journalisée dans le terminal au format habituel de
+Werkzeug, p. ex. `"GET /static/style.css HTTP/1.1" 304 -` : le code `304`
+signifie que le navigateur réutilise sa copie en cache de la feuille de
+style, et `-` indique qu'aucun corps de réponse n'a été envoyé. Une ligne
+`"GET /favicon.ico HTTP/1.1" 404 -` est aussi normale : le navigateur demande
+une icône d'onglet que le projet ne fournit pas.
 
 ### Utiliser la calculatrice
 
