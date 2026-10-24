@@ -34,4 +34,8 @@ gabarits dans `templates/` par défaut : ce nom de dossier ne doit pas changer.
   voir [`static/`](../static/README.md).
 - Les caractères envoyés par les boutons (`+`, `-`, `*`, `/`) doivent
   correspondre aux clés du dictionnaire `OPS` de `app.py`.
+- Le script distingue un résultat d'un message d'erreur avec `Number()` : un
+  résultat formaté par `format_result` est toujours un nombre valide, alors
+  qu'un message d'erreur donne `NaN`. Un nouveau message d'erreur ne doit donc
+  pas pouvoir être interprété comme un nombre.
 - Aucune bibliothèque JavaScript externe n'est utilisée.

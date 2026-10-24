@@ -20,4 +20,8 @@ l'URL `/static/` : ce nom de dossier ne doit pas changer.
   modification ici.
 - La grille `.buttons` suppose quatre boutons par rangée ; l'ordre des
   boutons dans le HTML détermine donc leur position.
+- Tous les éléments utilisent `box-sizing: border-box` : les largeurs et
+  hauteurs incluent le padding et la bordure. Une `width: 100%` ne déborde
+  donc pas du parent (voir l'Issue #6). Les boutons n'ont pas de padding
+  horizontal, pour ne pas imposer de largeur minimale sur petit écran.
 - Aucun préprocesseur ni outil de compilation : le CSS est servi directement.
