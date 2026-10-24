@@ -92,3 +92,23 @@ def test_calculate_division_par_zero():
     """La division par zéro n'est pas une erreur de format : ``ZeroDivisionError``."""
     with pytest.raises(ZeroDivisionError):
         calculate("5/0")
+
+
+@pytest.mark.parametrize("expression", ["inf+1", "1+inf", "nan+1", "-inf"])
+def test_calculate_rejette_les_operandes_non_finis(expression):
+    """« inf » et « nan » ne sont pas des nombres saisissables : ``ValueError``."""
+    with pytest.raises(ValueError):
+        calculate(expression)
+
+
+@pytest.mark.parametrize("expression", [
+    "9" * 400 + "+1",   # opérande trop grand pour un float
+    "1e200*1e200",      # résultat trop grand pour un float
+])
+def test_calculate_depassement(expression):
+    """Un opérande ou un résultat qui dépasse la capacité d'un float lève ``OverflowError``.
+
+    Sans cette vérification, le calcul produit silencieusement ``inf``.
+    """
+    with pytest.raises(OverflowError):
+        calculate(expression)

@@ -99,3 +99,8 @@ def test_post_expression_invalide_affiche_une_erreur(client):
 def test_post_division_par_zero_affiche_une_erreur(client):
     """La division par zéro est attrapée par la route et affichée comme erreur."""
     assert afficher(client, "5/0").startswith("Error:")
+
+
+def test_depassement_affiche_un_message(client):
+    """Un résultat trop grand affiche un message clair plutôt que « inf »."""
+    assert afficher(client, "9" * 400 + "+1") == "Erreur : résultat trop grand"
