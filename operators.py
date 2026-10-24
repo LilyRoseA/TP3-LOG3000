@@ -1,4 +1,8 @@
-"""Opérations arithmétiques utilisées par la calculatrice."""
+"""Opérations arithmétiques utilisées par la calculatrice.
+
+Chaque fonction reçoit deux opérandes numériques (des ``float`` produits par
+``app.calculate``) et retourne le résultat de l'opération correspondante.
+"""
 
 
 def add(a,b):
@@ -9,46 +13,46 @@ def add(a,b):
         b: Deuxième nombre.
 
     Returns:
-        La somme de ``a`` et ``b``.
+        La somme ``a + b``.
     """
     return a + b
 
 
 def subtract(a,b):
-    """Soustrait ``a`` de ``b``.
+    """Soustrait ``b`` de ``a``.
 
     Args:
-        a: Nombre soustrait.
-        b: Nombre de départ.
+        a: Nombre de départ (opérande de gauche).
+        b: Nombre soustrait (opérande de droite).
 
     Returns:
-        La différence ``b - a``.
+        La différence ``a - b``.
     """
     return b - a
 
 
 def multiply(a,b):
-    """Élève ``a`` à la puissance ``b``.
+    """Multiplie deux nombres.
 
     Args:
-        a: Base.
-        b: Exposant.
+        a: Premier facteur.
+        b: Deuxième facteur.
 
     Returns:
-        La puissance ``a ** b``.
+        Le produit ``a * b``.
     """
     return a ** b
 
 
 def divide(a,b):
-    """Effectue une division entière de ``a`` par ``b``.
+    """Divise ``a`` par ``b``.
 
     Args:
-        a: Dividende.
-        b: Diviseur.
+        a: Dividende (opérande de gauche).
+        b: Diviseur (opérande de droite).
 
     Returns:
-        Le quotient entier inférieur ou égal à la division de ``a`` par ``b``.
+        Le quotient réel ``a / b``.
 
     Raises:
         ZeroDivisionError: Si ``b`` vaut zéro.
