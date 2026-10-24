@@ -1,4 +1,9 @@
-"""Point d'entrée de l'application web de calculatrice."""
+"""Point d'entrée de l'application web de calculatrice.
+
+Définit l'application Flask, la route unique ``/`` et la fonction
+``calculate`` qui analyse l'expression saisie avant de déléguer le calcul
+aux fonctions du module ``operators``.
+"""
 
 from flask import Flask, request, render_template
 from operators import add, subtract, multiply, divide
@@ -35,6 +40,8 @@ def calculate(expr: str):
     op_pos = -1
     op_char = None
 
+    # Un seul opérateur est accepté. Un signe « - » devant un nombre compte
+    # aussi comme opérateur : les opérandes négatifs ne sont donc pas gérés.
     for i, ch in enumerate(s):
         if ch in OPS:
             if op_pos != -1:
@@ -43,7 +50,8 @@ def calculate(expr: str):
             op_char = ch
 
     if op_pos <= 0 or op_pos >= len(s) - 1:
-        # Opérateur à la fin ou au début n'est pas trouvé
+        # Aucun opérateur trouvé (op_pos == -1), ou opérateur sans opérande
+        # d'un côté (au début ou à la fin de l'expression).
         raise ValueError("invalid expression format")
 
     left = s[:op_pos]
@@ -70,8 +78,11 @@ def index():
         try:
             result = calculate(expression)
         except Exception as e:
+            # L'erreur est affichée dans l'écran de la calculatrice plutôt
+            # que de renvoyer une page d'erreur HTTP à l'utilisateur.
             result = f"Error: {e}"
     return render_template('index.html', result=result)
 
 if __name__ == '__main__':
+    # Mode debug (rechargement auto, traces détaillées) : développement local seulement.
     app.run(debug=True)
