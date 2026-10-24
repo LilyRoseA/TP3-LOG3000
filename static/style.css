@@ -1,3 +1,6 @@
+/* Styles de la calculatrice (templates/index.html). */
+
+/* Centre la calculatrice horizontalement et verticalement dans la fenêtre. */
 body {
    font-family: Arial, sans-serif;
    background-color: #f0f0f0;
@@ -37,6 +40,8 @@ h1 {
    color: #fff;
 }
 
+/* Grille de 4 colonnes : l'ordre des boutons dans le HTML détermine leur
+   position (trois chiffres puis un opérateur par rangée). */
 .buttons {
    display: grid;
    grid-template-columns: repeat(4, 1fr);
@@ -59,6 +64,7 @@ h1 {
    background-color: #555;
 }
 
+/* Les opérateurs et « = » sont mis en évidence en orange. */
 .operator {
    background-color: #ff9500;
 }
@@ -67,6 +73,8 @@ h1 {
    background-color: #e68a00;
 }
 
+/* Les règles :active sont placées après :hover pour l'emporter à
+   spécificité égale pendant le clic. */
 .btn:active {
    background-color: #444;
 }
