@@ -12,14 +12,23 @@ le résultat affiché à l'écran de la calculatrice.
 ### Portée
 
 - Une seule opération binaire par expression : addition (`+`),
-  soustraction (`-`), multiplication (`*`) et division (`/`).
-- Les opérandes sont des nombres positifs ; les résultats sont des nombres
-  à virgule flottante (p. ex. `2+3` donne `5.0`).
-- Hors portée : parenthèses, priorité des opérations, expressions à
-  plusieurs opérateurs et nombres négatifs (un `-` en tête est interprété
-  comme un opérateur).
-- Les expressions invalides (vide, sans opérateur, opérande manquant ou non
-  numérique) affichent un message `Error: ...` au lieu d'un résultat.
+  soustraction (`-`), multiplication (`*`) et division (`/`). Un nombre
+  seul est aussi accepté (« = » l'affiche tel quel).
+- Les opérandes sont des nombres réels ; chacun peut porter un signe `-`
+  (p. ex. `3--2`) ou être en notation scientifique (p. ex. `1e+16`).
+- Les résultats sont affichés sans décimales superflues, avec au plus
+  12 chiffres significatifs (`5+6` donne `11`, `7/2` donne `3.5`), et en
+  notation scientifique pour les très grands ou très petits nombres. Tout
+  résultat affiché peut servir d'opérande au calcul suivant.
+- Hors portée : parenthèses, priorité des opérations et expressions à
+  plusieurs opérateurs.
+- Les erreurs affichent un court message en français au lieu d'un résultat :
+  `Erreur : expression invalide`, `Erreur : division par zéro` ou
+  `Erreur : résultat trop grand`.
+
+> Ce comportement est la spécification visée. Les écarts constatés sont
+> suivis dans les [Issues](https://github.com/LilyRoseA/TP3-LOG3000/issues)
+> et vérifiés par la suite de tests.
 
 ## Structure du projet
 
@@ -124,14 +133,17 @@ une icône d'onglet que le projet ne fournit pas.
 ### Utiliser la calculatrice
 
 1. Composer l'expression avec les boutons : un nombre, un opérateur, puis un
-   second nombre (p. ex. `12`, `+`, `7`). Le champ d'affichage est en lecture
-   seule ; le clavier n'est pas utilisé.
+   second nombre (p. ex. `12`, `+`, `7`). Pour un nombre négatif, appuyer sur
+   `-` juste avant ses chiffres (p. ex. `3`, `*`, `-`, `2`). Le champ
+   d'affichage est en lecture seule ; le clavier n'est pas utilisé.
 2. Appuyer sur `=` pour envoyer l'expression au serveur. Le résultat (ou un
    message d'erreur) remplace l'expression à l'écran.
 3. Appuyer sur `C` pour effacer l'écran et recommencer.
 
-Il est possible de poursuivre un calcul à partir du résultat affiché (p. ex.
-après `5.0`, appuyer sur `*`, `2`, puis `=`).
+Après un résultat, un opérateur poursuit le calcul à partir de ce résultat
+(p. ex. après `5`, appuyer sur `*`, `2`, puis `=` donne `10`), alors qu'un
+chiffre commence une nouvelle saisie. Après une erreur, n'importe quel bouton
+efface d'abord le message.
 
 ## Tests
 

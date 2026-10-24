@@ -36,16 +36,21 @@ client de test de Flask.
 |---------------------|------------------|
 | `conftest.py`       | Fixture `client` partagée : client de test Flask en mode `TESTING`. |
 | `test_operators.py` | `add`, `subtract`, `multiply`, `divide` de `operators.py` : résultats pour des entiers, décimaux et zéro, ordre des opérandes, division réelle (sans troncature) et `ZeroDivisionError`. |
-| `test_calculate.py` | `calculate` de `app.py` : chaque opérateur, espaces, décimales, type du résultat, rejet (`ValueError`) des expressions vides, sans opérateur, à plusieurs opérateurs, à opérande manquant ou non numérique, et division par zéro. |
-| `test_routes.py`    | Route `/` : `GET` affiche un écran vide ; `POST` affiche le résultat ; les expressions invalides et la division par zéro affichent `Error: ...` avec un code 200 plutôt qu'une page 500. |
-| `test_interface.py` | `templates/index.html` rendu : chaque bouton de chiffre et d'opérateur affiche le caractère qu'il ajoute, seul `=` soumet le formulaire, `C` appelle `clearDisplay()`. |
+| `test_calculate.py` | `calculate` de `app.py` : chaque opérateur, espaces, décimales, type du résultat, opérandes négatifs et en notation scientifique, nombre seul, rejet (`ValueError`) des expressions mal formées et des opérandes `inf`/`nan`, division par zéro (`ZeroDivisionError`) et dépassement de capacité (`OverflowError`). |
+| `test_routes.py`    | Route `/` : `GET` affiche un écran vide ; format du résultat affiché (`11` et non `11.0`, 12 chiffres significatifs, notation scientifique) ; tout résultat affiché est réutilisable comme opérande ; nombre seul et écran vide ; messages d'erreur en français ; une exception imprévue n'est pas masquée. |
+| `test_interface.py` | `templates/index.html` rendu : chaque bouton de chiffre et d'opérateur affiche le caractère qu'il ajoute, seul `=` soumet le formulaire, `C` appelle `clearDisplay()`, titre et en-tête en français. |
 
 ### Hors couverture
 
+Ces comportements sont vérifiés manuellement dans un navigateur ; la
+procédure est décrite dans l'Issue correspondante.
+
 - Le JavaScript (`appendToDisplay`, `clearDisplay`) n'est pas exécuté ; seule
-  la structure HTML est vérifiée. Le tester demanderait un navigateur
-  automatisé (p. ex. Playwright ou Selenium).
-- Le rendu visuel (`static/style.css`) n'est pas testé automatiquement.
+  la structure HTML est vérifiée. En particulier, le comportement des boutons
+  après un résultat ou une erreur n'est pas testé automatiquement. Le tester
+  demanderait un navigateur automatisé (p. ex. Playwright ou Selenium).
+- Le rendu visuel (`static/style.css`), comme les dimensions de l'écran
+  d'affichage, n'est pas testé automatiquement.
 
 ## Ajouter un test
 
