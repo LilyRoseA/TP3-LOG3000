@@ -75,12 +75,15 @@ def index():
     result = ""
     if request.method == 'POST':
         expression = request.form.get('display', '')
+        # Les erreurs de saisie attendues sont affichées dans l'écran de la
+        # calculatrice, avec un message fixe plutôt que le texte technique de
+        # l'exception. Toute autre exception est un bogue : elle doit remonter.
         try:
             result = calculate(expression)
-        except Exception as e:
-            # L'erreur est affichée dans l'écran de la calculatrice plutôt
-            # que de renvoyer une page d'erreur HTTP à l'utilisateur.
-            result = f"Error: {e}"
+        except ValueError:
+            result = "Erreur : expression invalide"
+        except ZeroDivisionError:
+            result = "Erreur : division par zéro"
     return render_template('index.html', result=result)
 
 if __name__ == '__main__':
