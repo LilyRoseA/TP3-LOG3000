@@ -28,7 +28,7 @@ def subtract(a,b):
     Returns:
         La différence ``a - b``.
     """
-    return b - a
+    return a - b
 
 
 def multiply(a,b):
@@ -41,7 +41,7 @@ def multiply(a,b):
     Returns:
         Le produit ``a * b``.
     """
-    return a ** b
+    return a * b
 
 
 def divide(a,b):
@@ -57,4 +57,4 @@ def divide(a,b):
     Raises:
         ZeroDivisionError: Si ``b`` vaut zéro.
     """
-    return a // b
+    return a / b

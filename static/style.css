@@ -1,5 +1,11 @@
 /* Styles de la calculatrice (templates/index.html). */
 
+/* Inclut padding et bordure dans la largeur : sinon « width: 100% » plus un
+   padding déborde du parent (écran d'affichage, calculatrice sur mobile). */
+*, *::before, *::after {
+   box-sizing: border-box;
+}
+
 /* Centre la calculatrice horizontalement et verticalement dans la fenêtre. */
 body {
    font-family: Arial, sans-serif;
@@ -13,7 +19,7 @@ body {
 
 .calculator {
    width: 100%;
-   max-width: 600px;
+   max-width: 660px;
    background-color: #333;
    padding: 30px;
    border-radius: 15px;
@@ -29,7 +35,7 @@ h1 {
 
 #display {
    width: 100%;
-   height: 80px;
+   height: 110px;
    font-size: 36px;
    text-align: right;
    padding: 15px;
@@ -50,7 +56,9 @@ h1 {
 
 .btn {
    width: 100%;
-   padding: 30px;
+   /* Pas de padding horizontal : la largeur vient de la grille, et un padding
+      latéral imposerait une largeur minimale qui déborde sur petit écran. */
+   padding: 30px 0;
    font-size: 24px;
    border: none;
    border-radius: 10px;
