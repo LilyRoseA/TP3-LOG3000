@@ -5,6 +5,8 @@ Définit l'application Flask, la route unique ``/`` et la fonction
 aux fonctions du module ``operators``.
 """
 
+import re
+
 from flask import Flask, request, render_template
 from operators import add, subtract, multiply, divide
 
@@ -18,52 +20,43 @@ OPS = {
     '/': divide,
 }
 
+# Un nombre : un signe « - » facultatif, puis une partie décimale et un exposant
+# signé facultatifs. Couvre tout ce que l'écran affiche (« -1.5 », « 1e+16 »).
+NUMBER = r"-?\d+(?:\.\d+)?(?:e[+-]?\d+)?"
+
+# Deux nombres séparés par un opérateur de OPS. Comme le signe d'un opérande ou
+# d'un exposant fait partie de NUMBER, il n'est jamais pris pour l'opérateur.
+EXPRESSION_RE = re.compile(
+    rf"({NUMBER})([{re.escape(''.join(OPS))}])({NUMBER})"
+)
+
 
 def calculate(expr: str):
     """Évalue une expression contenant deux nombres et un opérateur.
 
+    Chaque nombre peut porter un signe ``-`` et être en notation scientifique,
+    ce qui permet de réutiliser n'importe quel résultat affiché comme opérande.
+
     Args:
-        expr: Expression textuelle, par exemple ``"2+3"``.
+        expr: Expression textuelle, par exemple ``"2+3"``, ``"3--2"`` ou
+            ``"1e+16*2"``.
 
     Returns:
         Le résultat de l'opération sélectionnée.
 
     Raises:
-        ValueError: Si l'expression est vide, mal formée ou contient des
-            opérandes qui ne sont pas numériques.
+        ValueError: Si l'expression est vide ou ne respecte pas la forme
+            « nombre opérateur nombre ».
     """
     if not expr or not isinstance(expr, str):
         raise ValueError("empty expression")
 
-    s = expr.replace(" ", "")
-
-    op_pos = -1
-    op_char = None
-
-    # Un seul opérateur est accepté. Un signe « - » devant un nombre compte
-    # aussi comme opérateur : les opérandes négatifs ne sont donc pas gérés.
-    for i, ch in enumerate(s):
-        if ch in OPS:
-            if op_pos != -1:
-                raise ValueError("only one operator is allowed")
-            op_pos = i
-            op_char = ch
-
-    if op_pos <= 0 or op_pos >= len(s) - 1:
-        # Aucun opérateur trouvé (op_pos == -1), ou opérateur sans opérande
-        # d'un côté (au début ou à la fin de l'expression).
+    match = EXPRESSION_RE.fullmatch(expr.replace(" ", ""))
+    if match is None:
         raise ValueError("invalid expression format")
 
-    left = s[:op_pos]
-    right = s[op_pos+1:]
-
-    try:
-        a = float(left)
-        b = float(right)
-    except ValueError:
-        raise ValueError("operands must be numbers")
-
-    return OPS[op_char](a, b)
+    left, op_char, right = match.groups()
+    return OPS[op_char](float(left), float(right))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
