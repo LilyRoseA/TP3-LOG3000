@@ -20,15 +20,19 @@ le résultat affiché à l'écran de la calculatrice.
   12 chiffres significatifs (`5+6` donne `11`, `7/2` donne `3.5`), et en
   notation scientifique pour les très grands ou très petits nombres. Tout
   résultat affiché peut servir d'opérande au calcul suivant.
-- Hors portée : parenthèses, priorité des opérations et expressions à
-  plusieurs opérateurs.
+- Hors portée : parenthèses, priorité des opérations, expressions à
+  plusieurs opérateurs et saisie au clavier. L'interface n'a pas de bouton de
+  point décimal : un nombre décimal ne peut être saisi qu'en réutilisant un
+  résultat (p. ex. `7/2` donne `3.5`, puis `*`, `2`).
 - Les erreurs affichent un court message en français au lieu d'un résultat :
   `Erreur : expression invalide`, `Erreur : division par zéro` ou
   `Erreur : résultat trop grand`.
 
-> Ce comportement est la spécification visée. Les écarts constatés sont
-> suivis dans les [Issues](https://github.com/LilyRoseA/TP3-LOG3000/issues)
-> et vérifiés par la suite de tests.
+> Ce comportement est vérifié par la suite de tests (voir [Tests](#tests)).
+> Les bogues trouvés dans la base de code initiale et leurs correctifs sont
+> documentés dans les [Issues fermées](https://github.com/LilyRoseA/TP3-LOG3000/issues?q=is%3Aissue+is%3Aclosed)
+> et les [Pull Requests](https://github.com/LilyRoseA/TP3-LOG3000/pulls?q=is%3Apr+is%3Aclosed)
+> correspondantes.
 
 ## Structure du projet
 
@@ -183,6 +187,10 @@ tests passent ; on n'y pousse pas directement.
 
    Types usuels : `fix` (correction de bogue), `feat` (fonctionnalité),
    `docs` (documentation), `test` (tests).
+
+   Si le correctif dépend d'un autre qui n'est pas encore fusionné, créer la
+   branche à partir de la branche dont il dépend, et l'indiquer dans la PR
+   pour qu'elle soit fusionnée après.
 3. **Commits** — Des commits petits et ciblés, suivant les
    [Conventional Commits](https://www.conventionalcommits.org/fr/) :
    `fix(app): rejette les expressions sans opérande droit`. Le message
@@ -193,6 +201,21 @@ tests passent ; on n'y pousse pas directement.
    ouvrir une PR vers `main`. La description résume le correctif, indique
    les tests exécutés et référence l'Issue avec `Closes #<numéro>` pour la
    fermer automatiquement à la fusion.
-6. **Revue et fusion** — Un autre membre de l'équipe relit la PR, puis la
-   fusionne. La branche est ensuite supprimée et la suite de tests complète
-   est réexécutée sur `main`.
+6. **Conflits** — Si la PR entre en conflit avec `main`, fusionner `main` à
+   jour dans la branche, résoudre en conservant le comportement des deux
+   côtés, réexécuter toute la suite de tests, puis pousser la branche :
+
+   ```bash
+   git switch <branche>
+   git merge origin/main
+   # résoudre, puis :
+   python -m pytest
+   git commit
+   git push
+   ```
+
+7. **Revue et fusion** — Un autre membre de l'équipe relit la PR et laisse
+   une revue (changement, résultat des tests, conflits résolus), puis la
+   fusionne avec un commit de fusion (« Create a merge commit »), qui garde
+   l'historique de la branche. La branche est ensuite supprimée et la suite de
+   tests complète est réexécutée sur `main`.
