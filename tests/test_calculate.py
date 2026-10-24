@@ -103,6 +103,7 @@ def test_calculate_rejette_les_operandes_non_finis(expression):
 
 @pytest.mark.parametrize("expression", [
     "9" * 400 + "+1",   # opérande trop grand pour un float
+    "9" * 400,          # nombre seul trop grand
     "1e200*1e200",      # résultat trop grand pour un float
 ])
 def test_calculate_depassement(expression):
