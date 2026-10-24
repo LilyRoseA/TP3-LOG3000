@@ -42,7 +42,8 @@ le résultat affiché à l'écran de la calculatrice.
 │   └── index.html
 ├── static/            # Fichiers servis tels quels (CSS)  → voir static/README.md
 │   └── style.css
-└── tests/             # Tests automatisés (pytest)  → voir tests/README.md
+├── tests/             # Tests automatisés (pytest)  → voir tests/README.md
+└── docs/              # Captures d'écran des correctifs visuels  → voir docs/README.md
 ```
 
 Chaque répertoire contient son propre `README.md` décrivant son rôle, ses
