@@ -24,29 +24,31 @@ OPS = {
 # signé facultatifs. Couvre tout ce que l'écran affiche (« -1.5 », « 1e+16 »).
 NUMBER = r"-?\d+(?:\.\d+)?(?:e[+-]?\d+)?"
 
-# Deux nombres séparés par un opérateur de OPS. Comme le signe d'un opérande ou
-# d'un exposant fait partie de NUMBER, il n'est jamais pris pour l'opérateur.
+# Un nombre, éventuellement suivi d'un opérateur de OPS et d'un second nombre.
+# Comme le signe d'un opérande ou d'un exposant fait partie de NUMBER, il n'est
+# jamais pris pour l'opérateur.
 EXPRESSION_RE = re.compile(
-    rf"({NUMBER})([{re.escape(''.join(OPS))}])({NUMBER})"
+    rf"({NUMBER})(?:([{re.escape(''.join(OPS))}])({NUMBER}))?"
 )
 
 
 def calculate(expr: str):
-    """Évalue une expression contenant deux nombres et un opérateur.
+    """Évalue une expression contenant deux nombres et un opérateur, ou un nombre seul.
 
     Chaque nombre peut porter un signe ``-`` et être en notation scientifique,
     ce qui permet de réutiliser n'importe quel résultat affiché comme opérande.
 
     Args:
-        expr: Expression textuelle, par exemple ``"2+3"``, ``"3--2"`` ou
-            ``"1e+16*2"``.
+        expr: Expression textuelle, par exemple ``"2+3"``, ``"3--2"``,
+            ``"1e+16*2"`` ou ``"42"``.
 
     Returns:
-        Le résultat de l'opération sélectionnée.
+        Le résultat de l'opération sélectionnée, ou le nombre lui-même s'il
+        n'y a pas d'opérateur (« = » appuyé sur un nombre).
 
     Raises:
         ValueError: Si l'expression est vide ou ne respecte pas la forme
-            « nombre opérateur nombre ».
+            « nombre [opérateur nombre] ».
     """
     if not expr or not isinstance(expr, str):
         raise ValueError("empty expression")
@@ -56,6 +58,8 @@ def calculate(expr: str):
         raise ValueError("invalid expression format")
 
     left, op_char, right = match.groups()
+    if op_char is None:
+        return float(left)
     return OPS[op_char](float(left), float(right))
 
 @app.route('/', methods=['GET', 'POST'])
@@ -66,8 +70,9 @@ def index():
         Le gabarit HTML rendu avec le résultat ou un message d'erreur.
     """
     result = ""
-    if request.method == 'POST':
-        expression = request.form.get('display', '')
+    expression = request.form.get('display', '')
+    # « = » sur un écran vide n'est pas une erreur : l'écran reste simplement vide.
+    if request.method == 'POST' and expression.strip():
         try:
             result = calculate(expression)
         except Exception as e:
