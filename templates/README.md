@@ -15,7 +15,10 @@ gabarits dans `templates/` par défaut : ce nom de dossier ne doit pas changer.
 
 1. Les boutons de chiffres et d'opérateurs appellent `appendToDisplay()`, qui
    ajoute un caractère dans le champ `display`. Le bouton `C` appelle
-   `clearDisplay()`.
+   `clearDisplay()`. Juste après une réponse du serveur (variable
+   `reponseAffichee`, initialisée par Jinja à partir de `result`), un chiffre
+   commence une nouvelle saisie, un opérateur poursuit le calcul à partir du
+   résultat, et un message d'erreur est effacé avant tout ajout.
 2. Le bouton `=` soumet le formulaire en `POST` vers `/`.
 3. `app.py` lit le champ `display`, calcule le résultat et rend de nouveau
    `index.html` avec la variable `result`, affichée dans le champ `display`.

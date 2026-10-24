@@ -43,13 +43,31 @@
 </div>
 
 <script>
+   // Vrai tant que l'écran affiche la réponse du serveur (résultat ou erreur)
+   // et qu'aucun bouton n'a encore été pressé depuis.
+   let reponseAffichee = {{ (result != '') | tojson }};
+
    /**
     * Ajoute un caractère à l'expression affichée.
+    *
+    * Juste après une réponse du serveur, un chiffre commence une nouvelle
+    * saisie et un opérateur poursuit le calcul à partir du résultat ; un
+    * message d'erreur est toujours effacé avant d'ajouter le caractère.
     * @param {string} value: Caractère à ajouter.
     * @returns {void}
     */
    function appendToDisplay(value) {
       const display = document.getElementById('display');
+      if (reponseAffichee) {
+         // Number() accepte tout résultat affiché (« -1.5 », « 1e+16 ») :
+         // seul un message d'erreur donne NaN.
+         const estErreur = Number.isNaN(Number(display.value));
+         const estChiffre = /^[0-9]$/.test(value);
+         if (estErreur || estChiffre) {
+            display.value = '';
+         }
+         reponseAffichee = false;
+      }
       display.value += value;
    }
 
@@ -59,6 +77,7 @@
     */
    function clearDisplay() {
       document.getElementById('display').value = '';
+      reponseAffichee = false;
    }
 </script>
 </body>
